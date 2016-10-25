@@ -3,19 +3,43 @@ local Source = require 'window.source'
 local Callstack = require 'window.callstack'
 local Locals = require 'window.locals'
 local Output = require 'window.output'
+local Menubar = require 'window.menubar'
 local termfx = require 'termfx'
 
 
 local Termide = Class({
 
-  solarized =
+  solarized_dark =
+  {
+    base3   = 234,
+    base2   = 235,
+    base1   = 240,   -- optional emphasized content
+    base0   = 241,   -- body text / default code / primary content
+    base00    = 244,
+    base01    = 245, --245,   -- comments / secondary content
+    base02    = 254,   -- background highlights
+    base03    = 230,   -- background
+    yellow   = 136,
+    orange   = 166,
+    red      = 160,
+    magenta  = 125,
+    violet   =  61,
+    blue     =  33,
+    cyan     =  37,
+    green    =  64,
+
+    fg = 241, -- base0
+    bg = 234, -- base3
+  },
+
+  solarized_light =
   {
     base03   = 234,
     base02   = 235,
     base01   = 240,   -- optional emphasized content
     base00   = 241,   -- body text / default code / primary content
     base0    = 244,
-    base1    = 249, --245,   -- comments / secondary content
+    base1    = 245, --245,   -- comments / secondary content
     base2    = 254,   -- background highlights
     base3    = 230,   -- background
     yellow   = 136,
@@ -27,14 +51,14 @@ local Termide = Class({
     cyan     =  37,
     green    =  64,
 
-    fg = 244, -- base00
+    fg = 244, -- base0
     bg = 230, -- base3
   },
 
   init = function( self,layout,theme )
 
     self.resize = self['layout_' .. (layout or 'simple')]
-    self.theme = theme or self.solarized
+    self.theme = theme or self.solarized_dark
 
   end,
 })
@@ -75,13 +99,33 @@ function Termide:layout_simple( w,h, theme )
   self.locals = self.locals or Locals(self,'[Locals]')
   self.output = self.output or Output(self,'[Output]')
 
+  self.menubar = self.menubar or Menubar(self,'[menu]')
+  self.menubar.items = self.menubar.items or
+  {
+    { name = 'Light', action = function()
+      self:resize(termfx.width(),termfx.height(),self.solarized_light)
+    end},
+
+    { name = 'Dark', action = function()
+      self:resize(termfx.width(),termfx.height(),self.solarized_dark)
+    end},
+  }
+
   -- arrange windows
-  local top,bottom = splitV({x=2,y=2,w=w,h=h},{},{},2/3)
+  local top,bottom = splitV({x=2,y=3,w=w,h=h},{},{},2/3)
   splitH(top,self.source,self.callstack,2/3)
   splitH(bottom,self.output,self.locals,1/2)
 
-  self.windows = { self.source, self.callstack, self.locals, self.output }
+  self.menubar.x = 2
+  self.menubar.y = 1
+  self.menubar.w = w-2
+  self.menubar.h = 1
 
+  self.windows = { self.menubar, self.source, self.callstack, self.locals, self.output }
+
+  for _,v in pairs(self.windows) do
+    v.theme = self.theme
+  end
 
 end
 
@@ -133,7 +177,7 @@ function Termide:debug()
         end
 
       elseif evt.type == 'resize' then
-        if evt.w > 60 and evt.h > 30 then
+        if evt.w > 80 and evt.h > 24 then
           self:resize(evt.w,evt.h)
         end
       end

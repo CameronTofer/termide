@@ -124,8 +124,8 @@ function Window:wraptokens(tokens, y, lineNumber, tokenStart, tokenEnd, lineSele
   }
   local bg =
   {
-    ['string']      = 155, --theme.base2,
-    ['comment']     = 194,
+    --['string']      = 155, --theme.base2,
+    --['comment']     = 194,
   }
 
   local sx = 4
@@ -134,7 +134,7 @@ function Window:wraptokens(tokens, y, lineNumber, tokenStart, tokenEnd, lineSele
 
   local w = self.w
 
-  y = y or 0
+  y = y or -1
   lineNumber = lineNumber or 0
   tokenStart = tokenStart or 1
   tokenEnd = tokenEnd or #tokens
