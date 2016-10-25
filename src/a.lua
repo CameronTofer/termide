@@ -7,9 +7,9 @@ end
 
 local function wtf(msg)
   local t
-  for i = 1,5 do
+  for i = 1,25 do
     t = i+1
-    print(i)
+    print(i,'toots')
   end
   local mutts = 'What the ' .. t
 

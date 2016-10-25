@@ -39,7 +39,7 @@ local Termide = Class({
     base01   = 240,   -- optional emphasized content
     base00   = 241,   -- body text / default code / primary content
     base0    = 244,
-    base1    = 245, --245,   -- comments / secondary content
+    base1    = 249, --245,   -- comments / secondary content
     base2    = 254,   -- background highlights
     base3    = 230,   -- background
     yellow   = 136,
@@ -58,7 +58,7 @@ local Termide = Class({
   init = function( self,layout,theme )
 
     self.resize = self['layout_' .. (layout or 'simple')]
-    self.theme = theme or self.solarized_dark
+    self.theme = theme or self.solarized_light
 
   end,
 })
@@ -216,7 +216,8 @@ function Termide:launchdebugger( filename )
     local env = setmetatable(
     {
       print = function(...)
-        print(...)
+        self.output.log = self.output.log or {}
+        table.insert(self.output.log, table.concat({...},'\t'))
       end,
       debug = function()
         self:debug()

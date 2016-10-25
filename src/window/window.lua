@@ -85,7 +85,7 @@ end,
     elseif evt.key == termfx.key.MOUSE_WHEEL_UP then
 
       if self.contentHeight > self.h then
-        self.contentTop = math.max( 1, (self.contentTop or 0) - 1)
+        self.contentTop = math.max( 0, (self.contentTop or 0) - 1)
       end
 
     elseif evt.key ~= termfx.key.MOUSE_RELEASE then
@@ -187,6 +187,45 @@ function Window:wraptokens(tokens, y, lineNumber, tokenStart, tokenEnd, lineSele
   end
 
   return y
+
+end
+
+
+function Window:wraplines(content)
+
+  if not content then
+    return
+  end
+
+  local theme = self.theme
+
+  local y = 0
+  local w = self.w - 4
+
+  if self.target then
+    self.contentTop = #self.source
+  end
+
+  for lineNumber,text in pairs(content) do
+
+    self:printat(0,y,lineNumber,theme.base1,theme.bg)
+
+    -- line needs to wrap
+    while #text > w do
+
+      -- wrap at last whitespace or split line if needed
+      local wrap = (text:sub(1,w+1):match('(.*)%s+[^%s]*')) or text:sub(1,w)
+
+      self:printat(4,y,wrap,theme.fg,theme.bg)
+      y = y + 1
+      text = text:sub(#wrap+1)
+    end
+
+    self:printat(4,y,text,theme.fg,theme.bg)
+
+    y = y + 1
+
+  end
 
 end
 
