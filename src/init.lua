@@ -1,4 +1,4 @@
-local Class = require 'class'
+local Class = require 'termide.class'
 local Source = require 'window.source'
 local Callstack = require 'window.callstack'
 local Locals = require 'window.locals'
